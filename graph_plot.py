@@ -11,20 +11,20 @@ class forecast_graphic:
         self.spot = spot
         self.discomfort_index = discomfort_index
         self.daytype = daytype
+        
+    # Matplotlibのグラフを描画する関数
+    def draw_graph(self,today_info):
+        fig = Figure(figsize = (8, 6), dpi = 150)
+        ax = fig.add_subplot(111)
+        ax.plot(today_info, marker = 'o', linestyle = '-')
+        ax.set_title(self.spot)
+        ax.set_xlabel('時間')
+        ax.set_ylabel('％')
+        ax.grid(True)
+        ax.legend(today_info, loc = 'upper right')
+        return fig    
     
     def forecast_tk(self):
-        # Matplotlibのグラフを描画する関数
-        def draw_graph():
-            fig = Figure(figsize = (8, 6), dpi = 150)
-            ax = fig.add_subplot(111)
-            ax.plot(today_info, marker = 'o', linestyle = '-')
-            ax.set_title(self.spot)
-            ax.set_xlabel('時間')
-            ax.set_ylabel('％')
-            ax.grid(True)
-            ax.legend(today_info, loc = 'upper right')
-            return fig
-        
         #当日/翌日の気象情報を取得 
         today_info = self.f_info.loc[[self.temperature, self.humidity]]
         today_info = today_info[today_info['type'] == self.daytype]
@@ -58,7 +58,7 @@ class forecast_graphic:
         root.title("気象情報")
 
         # Matplotlibのグラフを描画してTkinterウィンドウに埋め込む
-        fig = draw_graph()
+        fig = self.draw_graph(today_info)
         canvas = FigureCanvasTkAgg(fig, master = root)
         canvas.draw()
         canvas.get_tk_widget().pack()
