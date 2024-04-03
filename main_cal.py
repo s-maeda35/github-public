@@ -1,36 +1,64 @@
 #import demand_cal as dc
 import forecast_in as fi
 import graph_plot as gp
-
+import tkinter as tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 #1回目課題範囲#################################
 #当日/翌日の気象情報を取得 
 f_info = fi.foecast_info()
 
-#福岡市の気象情報をグラフ表示し、tkinterに埋め込み
-fk_graph = gp.forecast_graphic(f_info, 'fk_temperature', 'fk_humidity', '福岡市', 'fk_discomfort_index', 0)
-fk_graph.forecast_tk()
+def show_selection(button_num,f_info):
+    temperature_list = ['fk_temperature', 'oo_temperature', 'mz_temperature', 'kg_temperature', 'km_temperature', 'ng_temperature', 'sg_temperature']
+    humidity_list = ['fk_humidity', 'oo_humidity', 'mz_humidity', 'kg_humidity', 'km_humidity', 'ng_humidity', 'sg_humidity']
+    spot_list = ['福岡市', '大分市', '宮崎市', '鹿児島市', '熊本市', '長崎市', '佐賀市']
+    discomfort_index_list = ['fk_discomfort_index', 'oo_discomfort_index', 'mz_discomfort_index', 'kg_discomfort_index', 'km_discomfort_index', 'ng_discomfort_index', 'sg_discomfort_index']
+    #ラジオボタンの値を取得し、int型へ変換
+    selected_value = radio_var.get()
+    int(selected_value)
+    #選択された地点のインスタンスを作成
+    graph = gp.forecast_graphic(f_info, temperature_list[button_num], humidity_list[button_num], spot_list[button_num], discomfort_index_list[button_num], int(selected_value))
+    graph = graph.forecast_gf()
+    # Matplotlibのグラフを描画してTkinterウィンドウに埋め込む
+    canvas = FigureCanvasTkAgg(graph, master = root)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row = 9, column = 2)
 
-"""
-#大分市の気象情報をグラフ表示し、tkinterに埋め込み
-oo_graph = gp.forecast_graphic(f_info, 'oo_temperature', 'oo_humidity', '大分市', 'oo_discomfort_index', 0)
-oo_graph.forecast_tk()
+# Tkinterウィンドウの作成
+root = tk.Tk()
+root.geometry("900x700")
+root.title("気象情報")
+label = tk.Label(root, text = "【当日/翌日】").grid(row = 0, column = 0)
+label = tk.Label(root, text = "【地点一覧 】").grid(row = 3, column = 0)
+label = tk.Label(root, text = "【不快指数(目安)】").grid(row = 0, column = 2, sticky="w")
+label = tk.Label(root, text = "・  ～55：寒い　　　　　　").grid(row = 1, column = 2, sticky="w")
+label = tk.Label(root, text = "・55〜60：肌寒い　　　　　").grid(row = 2, column = 2, sticky="w")
+label = tk.Label(root, text = "・60〜65：何も感じない　　").grid(row = 3, column = 2, sticky="w")
+label = tk.Label(root, text = "・65〜70：快い　　　　　　").grid(row = 4, column = 2, sticky="w")
+label = tk.Label(root, text = "・70〜75：暑くない　　　　").grid(row = 5, column = 2, sticky="w")
+label = tk.Label(root, text = "・75〜80：やや暑い　　　　").grid(row = 6, column = 2, sticky="w")
+label = tk.Label(root, text = "・80〜85：暑くて汗が出る　").grid(row = 7, column = 2, sticky="w")
+label = tk.Label(root, text = "・85〜  ：暑くてたまらない").grid(row = 8, column = 2, sticky="w")
+# ラジオボタンの値を格納する変数
+radio_var = tk.StringVar(value = 0)
 
-#鹿児島市の気象情報をグラフ表示し、tkinterに埋め込み
-kg_graph = gp.forecast_graphic(f_info, 'kg_temperature', 'kg_humidity', '鹿児島市', 'kg_discomfort_index', 0)
-kg_graph.forecast_tk()
+# ラジオボタンの作成
+radio_button1 = tk.Radiobutton(root, text = "当日", variable = radio_var, value = 0).grid(row = 1, column = 0)
+radio_button2 = tk.Radiobutton(root, text = "翌日", variable = radio_var, value = 1).grid(row = 2, column = 0)
 
-#熊本市の気象情報をグラフ表示し、tkinterに埋め込み
-km_graph = gp.forecast_graphic(f_info, 'km_temperature', 'km_humidity', '熊本市', 'km_discomfort_index', 0)
-km_graph.forecast_tk()
+# ボタンを作成し、選択された場合にshow_selection関数を呼び出す
+button1 = tk.Button(root, text = "福岡市　", command = lambda: show_selection(0, f_info)).grid(row = 4, column = 0)
+button2 = tk.Button(root, text = "大分市　", command = lambda: show_selection(1, f_info)).grid(row = 5, column = 0)
+button3 = tk.Button(root, text = "宮崎市　", command = lambda: show_selection(2, f_info)).grid(row = 6, column = 0)
+button4 = tk.Button(root, text = "鹿児島市", command = lambda: show_selection(3, f_info)).grid(row = 7, column = 0)
+button5 = tk.Button(root, text = "熊本市　", command = lambda: show_selection(4, f_info)).grid(row = 4, column = 1)
+button6 = tk.Button(root, text = "長崎市　", command = lambda: show_selection(5, f_info)).grid(row = 5, column = 1)
+button3 = tk.Button(root, text = "佐賀市　", command = lambda: show_selection(6, f_info)).grid(row = 6, column = 1)
 
-#長崎市の気象情報をグラフ表示し、tkinterに埋め込み
-ng_graph = gp.forecast_graphic(f_info, 'ng_temperature', 'ng_humidity', '長崎市', 'ng_discomfort_index', 0)
-ng_graph.forecast_tk()
+#初期表示として、「福岡市（当日）」を表示
+show_selection(0, f_info)
 
-#佐賀市の気象情報をグラフ表示し、tkinterに埋め込み
-sg_graph = gp.forecast_graphic(f_info, 'sg_temperature', 'sg_humidity', '佐賀市', 'sg_discomfort_index', 0)
-sg_graph.forecast_tk()
-"""
+# イベントループの開始
+root.mainloop()
 
 #1回目課題範囲#################################
 
