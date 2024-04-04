@@ -2,6 +2,7 @@ from matplotlib.figure import Figure
 import japanize_matplotlib
 
 class forecast_graphic:
+    # コンストラクタの定義
     def __init__(self, f_info, temperature, humidity, spot, discomfort_index, daytype):
         self.f_info = f_info
         self.temperature = temperature
@@ -24,6 +25,7 @@ class forecast_graphic:
         ax.set_xticklabels(today_info.index, rotation = 90)
         return fig    
     
+    #取得した気象情報を抽出し、グラフに加工するメソッド
     def forecast_gf(self):
         #当日/翌日の気象情報を取得 
         today_info = self.f_info.loc[[self.temperature, self.humidity]]
@@ -43,10 +45,11 @@ class forecast_graphic:
                                                 tfr[7], tfr[8], tfr[9], tfr[10], tfr[11],tfr[12], tfr[13],\
                                                 tfr[14], tfr[15], tfr[16], tfr[17], tfr[18],tfr[19], tfr[20],\
                                                 tfr[21], tfr[22], tfr[23]]
-        # DataFrame内のすべての要素をfloat型に変換
-        today_info = today_info.astype(float)
-        # 'データ名'列をインデックスに設定し、転置する
-        today_info = today_info.T
-        #関数の呼び出し
-        fig = self.draw_graph(today_info)
+        today_info = today_info.astype(float)  # DataFrame内のすべての要素をfloat型に変換
+        today_info = today_info.T  # データ名列をインデックスに設定し、転置する
+        #説明用##########################
+        print(today_info)
+        print(type(today_info))
+        #説明用##########################
+        fig = self.draw_graph(today_info)  #関数の呼び出し
         return fig
