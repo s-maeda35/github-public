@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/reset.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/style.css' %}"/>
+        <title>九州の電力需要予測</title>
+
+    </head>
+        <body>
+            <header>
+                <aside>
+                    <nav>
+                        <ul>
+                            <li class="button"><a href="{% url 'index' %}">ホーム</a></li>
+                            <li class="button"><a href="{% url 'forecast_all' %}">気象情報(概要)</a></li>
+                            <li class="button"><a href="{% url 'forecast_details' %}">気象情報(詳細)</a></li>
+                            <li class="button"><a href="{% url 'demand_info' %}">需給予測情報</a></li>
+                            <li class="button"><a href="{% url 'setup' %}">設定</a></li>
+                            <form method="POST" action="{% url 'forecast_details' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="update-button">更新</button>
+                            </form>
+                        </ul>
+                    </nav>
+                </aside>
+            </header>
+            <main>
+                <div class="grid-container2">
+                    <h1 class="one_hour_forecast">【１時間天気】</h1>
+                    <h2 class="fk_info">(福岡市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot0day0.html' %}?{{ timestamp }}" class="iframe iframe3"></iframe>
+                    <h2 class="km_info">(熊本市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot4day0.html' %}?{{ timestamp }}" class="iframe iframe4"></iframe>
+                    <h2 class="kg_info">(鹿児島市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot3day0.html' %}?{{ timestamp }}" class="iframe iframe5"></iframe>
+                    <h2 class="oo_info">(大分市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot1day0.html' %}?{{ timestamp }}" class="iframe iframe6"></iframe>
+                    <h2 class="mz_info">(宮崎市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot2day0.html' %}?{{ timestamp }}" class="iframe iframe7"></iframe>
+                    <h2 class="ng_info">(長崎市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot5day0.html' %}?{{ timestamp }}" class="iframe iframe8"></iframe>
+                    <h2 class="sg_info">(佐賀市)</h2>
+                    <iframe src="{% static 'dmd_gui/html/spot6day0.html' %}?{{ timestamp }}" class="iframe iframe9"></iframe>
+                </div>
+            </main>
+        <footer>
+
+        </footer>
+    </body>
+</html>

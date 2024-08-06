@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/reset.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/style.css' %}"/>
+        <title>九州の電力需要予測</title>
+
+    </head>
+        <body>
+            <header>
+                <aside>
+                    <nav>
+                        <ul>
+                            <li class="button"><a href="{% url 'index' %}">ホーム</a></li>
+                            <li class="button"><a href="{% url 'forecast_all' %}">気象情報(概要)</a></li>
+                            <li class="button"><a href="{% url 'forecast_details' %}">気象情報(詳細)</a></li>
+                            <li class="button"><a href="{% url 'demand_info' %}">需給予測情報</a></li>
+                            <li class="button"><a href="{% url 'setup' %}">設定</a></li>
+                            <form method="POST" action="{% url 'demand_info' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="update-button">更新</button>
+                            </form>
+                        </ul>
+                    </nav>
+                </aside>
+            </header>
+            <main>
+                <img src="{% static 'dmd_gui/capture/graph.png' %}?{{ timestamp }}" alt="Graph">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>日付</th>
+                                <th>時刻</th>
+                                <th>総需要実績</th>
+                                <th>Q_需要予測</th>
+                                <th>N_需要予測</th>
+                                <th>使用率(%)</th>
+                                <th>予備率(%)</th>
+                                <th>供給力想定値</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in data_list %}
+                            <tr>
+                                <td>{{ data.id }}</td>
+                                <td>{{ data.formatted_date  }}</td>
+                                <td>{{ data.formatted_time }}</td>
+                                <td>{{ data.ploperformancet }}</td>
+                                <td class="{{ data.prediction_q_class }}">{{ data.prediction_q }}</td>
+                                <td class="{{ data.prediction_n_class }}">{{ data.prediction_n }}</td>
+                                <td>{{ data.used }}</td>
+                                <td>{{ data.supply }}</td>
+                                <td>{{ data.supply_prediction }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+            <footer>
+
+            </footer>
+        </body>
+    </html>

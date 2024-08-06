@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/reset.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/style.css' %}"/>
+        <title>九州の電力需要予測</title>
+
+    </head>
+        <body>
+            <header>
+                <aside>
+                    <nav>
+                        <ul>
+                            <li class="button"><a href="{% url 'index' %}">ホーム</a></li>
+                            <li class="button"><a href="{% url 'forecast_all' %}">気象情報(概要)</a></li>
+                            <li class="button"><a href="{% url 'forecast_details' %}">気象情報(詳細)</a></li>
+                            <li class="button"><a href="{% url 'demand_info' %}">需給予測情報</a></li>
+                            <li class="button"><a href="{% url 'setup' %}">設定</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+            </header>
+            <main>
+                <h1 class="home">設定画面</h1>
+            </main>
+            <footer>
+
+            </footer>
+        </body>
+    </html>

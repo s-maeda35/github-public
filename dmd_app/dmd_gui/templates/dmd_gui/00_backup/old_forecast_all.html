@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/reset.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/style.css' %}"/>
+        <title>九州の電力需要予測</title>
+
+    </head>
+        <body>
+            <header>
+                <aside>
+                    <nav>
+                        <ul class="menu">
+                            <li class="button"><a href="{% url 'index' %}">ホーム</a></li>
+                            <li class="button"><a href="{% url 'forecast_all' %}">気象情報(概要)</a></li>
+                            <li class="button"><a href="{% url 'forecast_details' %}">気象情報(詳細)</a></li>
+                            <li class="button"><a href="{% url 'demand_info' %}">需給予測情報</a></li>
+                            <li class="button"><a href="{% url 'demand_comparison' %}">需給予測情報(比較)</a></li>
+                            <li class="button"><a href="{% url 'setup' %}">設定</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+            </header>
+            <main>
+                <div class="main_forecast">
+                    <h1 class="all_forecast">【九州の天気】</h1>
+                    <form action="foecast_info_update1.php" method="post">
+                        <input type="submit" value="更新" name="foecast_info_update1" class="update-button foecast_info_update1">
+                    </form>
+                    <iframe src="{% static 'dmd_gui/html/all_realtime.html' %}" class="iframe iframe1" scrolling="no"></iframe>
+                    <h1 class="radar_forecast">【雨雲レーダー】</h1>
+                    <iframe src="{% static 'dmd_gui/html/radar_realtime.html' %}" class="iframe iframe2"></iframe>
+                </div>
+            </main>
+            <footer>
+                <p>現在時刻:<span id="clock"></span></p>
+                <script>
+                    function updateClock() {
+                        const now = new Date();
+                        const hours = String(now.getHours()).padStart(2, '0');
+                        const minutes = String(now.getMinutes()).padStart(2, '0');
+                        const seconds = String(now.getSeconds()).padStart(2, '0');
+                        const timeString = `${hours}:${minutes}:${seconds}`;
+                        document.getElementById('clock').textContent = timeString;
+                    }
+                    setInterval(updateClock, 1000); // 1秒ごとにupdateClock関数を実行
+                    updateClock(); // 初回の実行
+                </script>
+            </footer>
+        </body>
+    </html>

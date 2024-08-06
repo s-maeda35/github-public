@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="02_css/reset.css">
+        <link rel="stylesheet" href="02_css/style.css">
+        <title>九州の電力需要予測</title>
+
+    </head>
+    <html>
+        <body>
+            <header>
+                <aside>
+                    <nav>
+                        <ul>
+                            <li class="button">ホーム</li>
+                            <li class="button">気象情報</li>
+                            <li class="button">需給予測情報</li>
+                            <li class="button">需給予測情報(比較)</li>
+                            <li class="button">発電設備情報</li>
+                            <li class="button">設定</li>
+                        </ul>
+                    </nav>
+                </aside>
+            </header>
+            <main class="grid-container">
+                <section class="forecast_info">
+                    <div class="item01">
+                        <h1>■現在の気象情報</h1>
+                    </div>
+                    <div class="item02">
+                    </div>
+                    <div class="item03">
+                        <!-- <iframe src="spot0day0.html" class="scaled-iframe"></iframe> -->
+                        <!-- <iframe src="spot0day0.html" class="scaled-iframe"></iframe> -->
+                    </div>
+                    <div class="item04">
+                        <!-- <iframe src="spot0day0.html" class="scaled-iframe"></iframe> -->
+                    </div>
+                </section>
+                <section class="demand_info">
+                    <div class="item05">
+                        <h1>■現在の需給情報</h1>
+                    </div>
+                    <div class="item06">
+                    </div>
+                    <div class="item07">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr><th rowspan="2">時刻</th><th rowspan="2">需要実績</th><th colspan="2">需要予測</th><th colspan="2">比較</th></tr>
+                                    <tr><th>九電</th><th>制作物</th><th>九電</th><th>制作物</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+            <footer>
+                <p>現在時刻:<span id="clock"></span></p>
+                <script>
+                    function updateClock() {
+                        const now = new Date();
+                        const hours = String(now.getHours()).padStart(2, '0');
+                        const minutes = String(now.getMinutes()).padStart(2, '0');
+                        const seconds = String(now.getSeconds()).padStart(2, '0');
+                        const timeString = `${hours}:${minutes}:${seconds}`;
+                        document.getElementById('clock').textContent = timeString;
+                    }
+                    setInterval(updateClock, 1000); // 1秒ごとにupdateClock関数を実行
+                    updateClock(); // 初回の実行
+                </script>
+            </footer>
+        </body>
+    </html>

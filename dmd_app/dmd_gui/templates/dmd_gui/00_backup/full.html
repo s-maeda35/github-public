@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Screen Example</title>
+    <link rel="stylesheet" href="02_css/aaa.css">
+</head>
+<body>
+    <div class="fullscreen-container" id="fullscreen-container">
+        <div class="content">
+            <h1>全画面表示のテキスト</h1>
+            <p>このテキストは中央に配置されています。</p>
+        </div>
+        <button class="fullscreen-button" onclick="toggleFullscreen()">全画面表示</button>
+    </div>
+
+    <script>
+        function toggleFullscreen() {
+            var elem = document.getElementById("fullscreen-container");
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { // Firefox
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { // IE/Edge
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
