@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.urls import path
 from . import views
-# from .views import demand_info
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('forecast_all/', views.forecast_all, name='forecast_all'),
     path('forecast_details/', views.forecast_details, name='forecast_details'),
     path('demand_info/', views.demand_info, name='demand_info'),
-    path('setup/', views.setup, name='setup'),
 ]

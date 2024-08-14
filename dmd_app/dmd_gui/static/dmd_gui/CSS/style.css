@@ -18,6 +18,51 @@ h1 {
 }
 
 
+/* login.html */
+.login_form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin: 50px auto;
+}
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.login_button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: center;
+}
+.login_button:hover {
+    background-color: #0056b3;
+}
+.login_p {
+    text-align: center;
+    margin-top: 10px;
+}
+.login_p[style="color: red;"] {
+    color: red;
+}
+
+
 /* メニュー表示 */
 header aside nav ul {
     display: flex;
@@ -47,16 +92,17 @@ header aside nav ul li {
 }
 .button:active {
     background-color: #45a049;
-    box-shadow: 0 5px #666666;
+    box-shadow: 0 5px #999;
     transform: translateY(4px);
 }
 .update-button {
     display: inline-block;
-    margin-left: 600px;
+    margin-left: 700px;
     background-color: #999;
     border: 1px solid;
     padding: 5px;
 }
+
 
 /* index.html */
 .home {
@@ -231,6 +277,9 @@ header aside nav ul li {
 
 
 /* demand_info.html */
+.demand_Graph {
+    width: 100%;
+}
 .table-container {
     width: 80%;
     margin: 20px auto;
@@ -255,7 +304,6 @@ thead {
     top: 0; /* スクロールに対して固定する */
     z-index: 1; /* 他の要素よりも前面に表示 */
 }
-
 tbody {
     display: block;
     height: 300px; /* 必要に応じて調整 */
@@ -281,7 +329,7 @@ tr:hover {
 .highlight {
     background-color: rgb(121, 235, 121);
 }
-/* メディアクエリ（レスポンシブデザイン） */
+/* メディアクエリ（レスポンシブデザイン）  ※参考 */
 @media (max-width: 768px) {
     .table-container {
         width: 100%;
@@ -299,5 +347,23 @@ footer{
     background-color:cyan;
     bottom: 0;
     width: 100%;
-    padding: 0.5em;
+}
+.logout-button {
+    margin: 0.3em;
+    background-color: #999;
+    border: 1px solid;
+    padding: 0.1em;
+    width: 8%;
+    text-align: center;
+}
+.error-message {
+    color: red;
+    background-color: #fdd;
+    border: 1px solid red;
+    padding: 0.3em;
+    margin: 0.1em 0.1em 0.1em 50.0em;
+    width: 50%;
+}
+.error-message.visible {
+    display: block;
 }

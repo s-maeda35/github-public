@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/reset.css' %}"/>
-        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/style.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'dmd_gui/css/style.css' %}?{{ timestamp }}"/>
         <title>九州の電力需要予測</title>
 
     </head>
@@ -17,8 +17,7 @@
                             <li class="button"><a href="{% url 'index' %}">ホーム</a></li>
                             <li class="button"><a href="{% url 'forecast_all' %}">気象情報(概要)</a></li>
                             <li class="button"><a href="{% url 'forecast_details' %}">気象情報(詳細)</a></li>
-                            <li class="button"><a href="{% url 'demand_info' %}">需給予測情報</a></li>
-                            <li class="button"><a href="{% url 'setup' %}">設定</a></li>
+                            <li class="button"><a href="{% url 'demand_info' %}">需要予測情報</a></li>
                             <form method="POST" action="{% url 'demand_info' %}">
                                 {% csrf_token %}
                                 <button type="submit" class="update-button">更新</button>
@@ -28,7 +27,7 @@
                 </aside>
             </header>
             <main>
-                <img src="{% static 'dmd_gui/capture/graph.png' %}?{{ timestamp }}" alt="Graph">
+                <img src="{% static 'dmd_gui/capture/graph.png' %}?{{ timestamp }}" alt="Graph" class='demand_Graph'>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -36,7 +35,7 @@
                                 <th>ID</th>
                                 <th>日付</th>
                                 <th>時刻</th>
-                                <th>総需要実績</th>
+                                <th>需要実績</th>
                                 <th>Q_需要予測</th>
                                 <th>N_需要予測</th>
                                 <th>使用率(%)</th>
@@ -63,7 +62,10 @@
                 </div>
             </main>
             <footer>
-
+                <a href="{% url 'logout' %}" class="logout-button">ログアウト</a>
+                <div id="error-message" class="error-message {% if error_message %}visible{% endif %}">
+                    <p>エラー内容：{{ error_message }}</p>
+                </div>
             </footer>
         </body>
     </html>

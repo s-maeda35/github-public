@@ -2,6 +2,8 @@ from demand_cal import demandCal
 from datetime import datetime, timedelta
 import os
 import django
+from workalendar.asia import Japan
+import pandas as pd
 
 
 def get_times():
@@ -32,9 +34,7 @@ def get_daytype():
     # 現在の日付を取得
     now = datetime.now()
     # 曜日を取得 (0=月曜日, 1=火曜日, ..., 6=日曜日)
-    weekday = now.weekday()
-    # 曜日をカスタムの範囲に変換 (日曜日=1, ..., 土曜日=7)
-    dayType = (weekday + 1) % 7 + 1
+    dayType = now.weekday()
     return dayType
 
 
@@ -45,7 +45,7 @@ def get_forecast():
     """
     def get_forecast_as_list(forecasts):
         """
-        DBから気温(1h)を取得するためのリストを作成する関数
+        DBから気温(1h)を取得するための取得リストを作成する関数
         
         """
         result_list = []
@@ -99,55 +99,106 @@ def get_forecast():
     result_list.append(km_result_list)
     return result_list
 
-# 需要比率（2023年11月）政府統計より
-# グループ1：福岡：37％、佐賀：8％
-group1_demand_ratio = ((38 + 8) / 100)
-# グループ2：鹿児島：12％、宮崎：8％
-group2_demand_ratio = ((12 + 8) / 100)
-# グループ3：熊本：14％、長崎：10％、大分：10％
-group3_demand_ratio = ((14 + 10 + 10) / 100)
 
-# 設定
-times = get_times()
-dayType = get_daytype()
-all_tmp = get_forecast()
-fk_fingers = 0
-kg_fingers = 0
-km_fingers = 0
-fk_spot = 0
-kg_spot = 1
-km_spot = 2
-fk_humidity = 0
-kg_humidity = 0
-km_humidity = 0
-plot_demand_list = []
-
-# メイン処理(当日の0時～23時の需要予測値を計算)
-for plot in range(24):
-    time = times[plot]
-    # 「fk_spot=0(福岡)」のインスタンスを作成し、需要比率を加味して需要予測値を算出
-    fk_dc = demandCal(time,dayType,fk_fingers,all_tmp[0][0][f'plot_{plot + 1}'],fk_spot,fk_humidity)
-    fk_demand = fk_dc.demand_select()
-    fk_demand = fk_demand * group1_demand_ratio
-    # 「kg_spot=1(鹿児島)」のインスタンスを作成し、需要比率を加味して需要予測値を算出
-    kg_dc = demandCal(time,dayType,kg_fingers,all_tmp[1][0][f'plot_{plot + 1}'],kg_spot,kg_humidity)
-    kg_demnd = kg_dc.demand_select()
-    kg_demnd = kg_demnd * group2_demand_ratio
-    # 「km_spot=2(熊本)」のインスタンスを作成し、需要比率を加味して需要予測値を算出
-    km_dc = demandCal(time,dayType,km_fingers,all_tmp[2][0][f'plot_{plot + 1}'],km_spot,km_humidity)
-    km_demand = km_dc.demand_select()
-    km_demand = km_demand * group3_demand_ratio
-    # 九州域内の需要予測値を算出し、小数点第一位に丸め、リストに格納
-    plot_demand = fk_demand + kg_demnd + km_demand
-    plot_demand = round(plot_demand, 1)
-    plot_demand_list.append(plot_demand)
+def dayTypeSelection1(dayType):
+    """
+    対象日が「祝日」OR「それ以外」を判定し、「祝日」OR「それ以外」のデータリストを作成する関数
     
-    # デバッグ用
-    print(plot_demand)
+    """
+    # 設定情報
+    perform_in = pd.read_csv('perform_in.csv')
+    year_list = [2020,2021,2022,2023,2024]
+    cal = Japan()
+    check_flag = False
+    # 現在の日付を取得。"YYYY-MM-DD" 形式でフォーマット
+    current_date = datetime.now()
+    check_date_str = current_date.strftime("%Y-%m-%d")
+    check_date = datetime.strptime(check_date_str, "%Y-%m-%d").date()
+    # CSVファイルから読み込んだデータを加工
+    perform_in_holiday_list = perform_in.drop(perform_in.index, axis=0)
+    perform_in['date'] = pd.to_datetime(perform_in['date']).dt.date
+    # 対象データリストの作成
+    for year in year_list:
+        holidays_tuple = cal.holidays(year)
+        for holiday in holidays_tuple:
+            holiday_list = list(holiday)
+            if check_date == holiday_list[0]:
+                if dayType == 5 or dayType == 6:
+                    continue
+                else:
+                    perform_in = perform_in[perform_in["date"] == holiday_list[0]] 
+                    check_flag = True
+                    break
+            perform_in_holiday = perform_in[perform_in["date"] == holiday_list[0]]
+            perform_in_holiday_list = pd.concat([perform_in_holiday_list, perform_in_holiday], ignore_index=True)
+    else:
+        # 対象日が祝日の場合には、祝日のデータを抽出する。対象日が祝日でない場合には、祝日以外のデータを抽出する。
+        if check_flag:
+            perform_in = perform_in_holiday_list
+        else:
+            perform_in = pd.merge(perform_in, perform_in_holiday_list, indicator=True, how='outer').query('_merge == "left_only"').drop(columns=['_merge'])
+    return perform_in
 
-from dmd_gui.models import DemandData0
-# DBに保存
-for index, value in enumerate(plot_demand_list):
-    record = DemandData0.objects.get(id=index)  
-    record.prediction_n = value
-    record.save()
+
+def get_demand():
+    """
+    DBから0時時点の需要実績を取得する関数
+    """
+    # Django設定のインポートと設定
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dmd_app.settings')
+    django.setup()
+    from dmd_gui.models import DemandData0
+
+    # idが0のレコードを取得
+    try:
+        demand = DemandData0.objects.get(id=0)  # idが0のレコードを取得
+        ploperformancet_data = demand.ploperformancet   # 正しいフィールド名に変更
+        return ploperformancet_data
+    except DemandData0.DoesNotExist:
+        return None  # レコードが存在しない場合はNoneを返す
+
+
+def d_main():
+    # 設定情報
+    group1_demand_ratio = ((38 + 8) / 100)  # グループ1：福岡：37％、佐賀：8％(需要比率（2023年11月）政府統計より)
+    group2_demand_ratio = ((12 + 8) / 100)  # グループ2：鹿児島：12％、宮崎：8％(需要比率（2023年11月）政府統計より)
+    group3_demand_ratio = ((14 + 10 + 10) / 100)  # グループ3：熊本：14％、長崎：10％、大分：10％(需要比率（2023年11月）政府統計より)
+    times = get_times()
+    dayType = get_daytype()
+    all_tmp = get_forecast()
+    plot_demand_list = []
+    perform_in = dayTypeSelection1(dayType)
+    ploperformancet_data = get_demand()
+    time_Correction = 0
+    
+    # メイン処理(当日の0時～23時の需要予測値を計算)
+    for plot in range(24):
+        time = times[plot]
+        # 「fk_spot=0(福岡)」のインスタンスを作成し、需要比率を加味して需要予測値を算出
+        fk_dc = demandCal(time, dayType, all_tmp[0][0][f'plot_{plot + 1}'], 0, perform_in)
+        fk_demand = fk_dc.demand_select()
+        fk_demand = fk_demand * group1_demand_ratio
+        # 「kg_spot=1(鹿児島)」のインスタンスを作成し、需要比率を加味して需要予測値を算出
+        kg_dc = demandCal(time, dayType, all_tmp[1][0][f'plot_{plot + 1}'], 1, perform_in)
+        kg_demnd = kg_dc.demand_select()
+        kg_demnd = kg_demnd * group2_demand_ratio
+        # 「km_spot=2(熊本)」のインスタンスを作成し、需要比率を加味して需要予測値を算出
+        km_dc = demandCal(time, dayType, all_tmp[2][0][f'plot_{plot + 1}'], 2, perform_in)
+        km_demand = km_dc.demand_select()
+        km_demand = km_demand * group3_demand_ratio
+        # spot1~3を合計
+        plot_demand = fk_demand + kg_demnd + km_demand
+        # 0時時点の需要の差分を基に補正比率を算出
+        if time == '00:00:00':
+            time_Correction = ploperformancet_data / plot_demand
+        plot_demand = plot_demand * time_Correction
+        # 九州域内の需要予測値を算出し、小数点第一位に丸め、リストに格納
+        plot_demand = round(plot_demand, 1)
+        plot_demand_list.append(plot_demand)
+
+    # DBに保存
+    from dmd_gui.models import DemandData0
+    for index, value in enumerate(plot_demand_list):
+        record = DemandData0.objects.get(id=index)  
+        record.prediction_n = value
+        record.save()

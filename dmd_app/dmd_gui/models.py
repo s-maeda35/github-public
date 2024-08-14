@@ -70,3 +70,4 @@ class DemandData0(models.Model):
     supply_prediction = models.FloatField()
     def __str__(self):
         return f"{self.date} {self.time}"
+

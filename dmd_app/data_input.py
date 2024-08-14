@@ -12,10 +12,7 @@ import japanize_matplotlib
 import matplotlib
 matplotlib.use('Agg') # Matplotlibのインタラクティブなバックエンドを無効にする
 
-# メモ
-#python manage.py makemigrations dmd_gui
-#python manage.py migrate
-    
+
 def foecast_info_update1():
     """
     「forecast_all.html」の「九州の天気」の内容を更新する関数
@@ -24,7 +21,7 @@ def foecast_info_update1():
     # 設定情報
     load_url_9 = 'https://tenki.jp/forecast/9/'
     line_number = 20
-    all_filename = 'C:\\Users\\frontier-Python\\Desktop\\dmd_app\\dmd_gui\\static\\dmd_gui\\html\\all_realtime.html'
+    all_filename = 'dmd_gui\\static\\dmd_gui\\html\\all_realtime.html'
     # 最新の天気予報情報を取得
     all9_html = requests.get(load_url_9)
     soup = BeautifulSoup(all9_html.content,'html.parser')
@@ -46,7 +43,7 @@ def foecast_info_update2():
     """
     # 設定情報
     load_url_radar = 'https://tenki.jp/radar/9/'
-    radar_filename = 'C:\\Users\\frontier-Python\\Desktop\\dmd_app\\dmd_gui\\static\\dmd_gui\\html\\radar_realtime.html'
+    radar_filename = 'dmd_gui\\static\\dmd_gui\\html\\radar_realtime.html'
     # 最新の天気予報情報を取得
     radar_html = requests.get(load_url_radar)
     soup = BeautifulSoup(radar_html.content,'html.parser')
@@ -83,7 +80,7 @@ def foecast_info_update3():
             #######################################################
             #画面で使用するHTMLファイルの作成
             filename = 'spot' + str(spotCounter) + 'day' + str(i)
-            with open(f'C:\\Users\\frontier-Python\\Desktop\\dmd_app\\dmd_gui\\static\\dmd_gui\\html\\{filename}.html', 'w', encoding='utf-8') as file:
+            with open(f'dmd_gui\\static\\dmd_gui\\html\\{filename}.html', 'w', encoding='utf-8') as file:
                 dayType_text = dayType.prettify() 
                 file.write(dayType_text)
             #######################################################
@@ -183,56 +180,59 @@ def demand_info_update1():
     # 設定情報
     today = datetime.now().strftime('%Y%m%d')  
     url = f'https://www.kyuden.co.jp//td_power_usages//csv//juyo-hourly-{today}.csv'
-    filename = f'C:\\Users\\frontier-Python\\Desktop\\dmd_app\\98_new_demand_data\\juyo-hourly-{today}.csv'
-    image_path = 'C:\\Users\\frontier-Python\\Desktop\\dmd_app\\dmd_gui\\static\\dmd_gui\\capture\\graph.png'
+    filename = f'dmd_gui\static\dmd_gui\\new_demand_data\\juyo-hourly-{today}.csv'
     # HTTP GETリクエストを送信してファイルを取得
     response = requests.get(url)
-    # レスポンスが成功した場合
-    if response.status_code == 200:
-        with open(filename, 'wb') as file:
-            file.write(response.content)
-        # CSVファイルの読み込み
-        demand0_df = pd.read_csv(filename, encoding='shift_jis', skiprows=13, nrows=24)
-        # カラム名を変更する辞書を定義
-        new_column_names = {
-        'DATE': 'date',
-        'TIME': 'time',
-        '当日実績(万kW)': 'ploperformancet',
-        '予測値(万kW)': 'prediction',
-        '使用率(%)': 'used',
-        '予備率(%)': 'supply',
-        '供給力想定値(万kW)': 'supply_prediction'
-        }
-        demand0_df = demand0_df.rename(columns=new_column_names)
-        # DBへ保存
-        for index, row in demand0_df.iterrows():
-            data_instance2 = DemandData0(
-                id=index,
-                date=datetime.strptime(row['date'], "%Y/%m/%d").date(),
-                time=row['time'],
-                ploperformancet=row['ploperformancet'],
-                prediction_q=row['prediction'],
-                used=row['used'],
-                supply=row['supply'],
-                supply_prediction=row['supply_prediction']
-                )
-            data_instance2.save()
-        data = DemandData0.objects.all()
-        # 「需要実績」「Q_需要予測」「N_需要予測」の折れ線グラフを作成
-        x_values = [row.id for row in data]
-        ploperformancet_values = [row.ploperformancet for row in data]
-        prediction_q_values = [row.prediction_q for row in data]
-        prediction_n_values = [row.prediction_n for row in data]
-        plt.figure(figsize=(15, 2.5))
-        plt.plot(x_values, ploperformancet_values, marker='o', label='需要実績')
-        plt.plot(x_values, prediction_q_values, marker='o', label='Q_需要予測')
-        plt.plot(x_values, prediction_n_values, marker='o', label='N_需要予測')
-        plt.xlabel('時')
-        plt.ylabel('(MW)')
-        plt.title('総需要')
-        plt.grid(True)
-        plt.legend()
-        plt.savefig(image_path)
-        plt.close()
-    else:
-        print("ファイルのダウンロードに失敗しました。ステータスコード:", response.status_code)
+    with open(filename, 'wb') as file:
+        file.write(response.content)
+    # CSVファイルの読み込み
+    demand0_df = pd.read_csv(filename, encoding='shift_jis', skiprows=13, nrows=24)
+    # カラム名を変更する辞書を定義
+    new_column_names = {
+    'DATE': 'date',
+    'TIME': 'time',
+    '当日実績(万kW)': 'ploperformancet',
+    '予測値(万kW)': 'prediction',
+    '使用率(%)': 'used',
+    '予備率(%)': 'supply',
+    '供給力想定値(万kW)': 'supply_prediction'
+    }
+    demand0_df = demand0_df.rename(columns=new_column_names)
+    # DBへ保存
+    for index, row in demand0_df.iterrows():
+        data_instance2 = DemandData0(
+            id=index,
+            date=datetime.strptime(row['date'], "%Y/%m/%d").date(),
+            time=row['time'],
+            ploperformancet=row['ploperformancet'],
+            prediction_q=row['prediction'],
+            used=row['used'],
+            supply=row['supply'],
+            supply_prediction=row['supply_prediction']
+            )
+        data_instance2.save()
+
+
+def demand_graph():
+    """
+    「demand_info.html」に表示するグラフを作成する関数
+    
+    """
+    image_path = 'dmd_gui\\static\\dmd_gui\\capture\\graph.png'
+    data = DemandData0.objects.all()
+    # 「需要実績」「Q_需要予測」「N_需要予測」の折れ線グラフを作成
+    x_values = [row.id for row in data]
+    ploperformancet_values = [row.ploperformancet for row in data]
+    prediction_q_values = [row.prediction_q for row in data]
+    prediction_n_values = [row.prediction_n for row in data]
+    plt.figure(figsize=(15, 2.5))
+    plt.plot(x_values, ploperformancet_values, marker='o', label='需要実績')
+    plt.plot(x_values, prediction_q_values, marker='o', label='Q_需要予測')
+    plt.plot(x_values, prediction_n_values, marker='o', label='N_需要予測')
+    plt.xlabel('時')
+    plt.ylabel('(MW)')
+    plt.title('総需要')
+    plt.grid(True)
+    plt.legend()
+    plt.savefig(image_path)
+    plt.close()

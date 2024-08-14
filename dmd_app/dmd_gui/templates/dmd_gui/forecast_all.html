@@ -17,8 +17,7 @@
                             <li class="button"><a href="{% url 'index' %}">ホーム</a></li>
                             <li class="button"><a href="{% url 'forecast_all' %}">気象情報(概要)</a></li>
                             <li class="button"><a href="{% url 'forecast_details' %}">気象情報(詳細)</a></li>
-                            <li class="button"><a href="{% url 'demand_info' %}">需給予測情報</a></li>
-                            <li class="button"><a href="{% url 'setup' %}">設定</a></li>
+                            <li class="button"><a href="{% url 'demand_info' %}">需要予測情報</a></li>
                             <form method="POST" action="{% url 'forecast_all' %}">
                                 {% csrf_token %}
                                 <button type="submit" class="update-button">更新</button>
@@ -36,7 +35,10 @@
                 </div>
             </main>
             <footer>
-
+                <a href="{% url 'logout' %}" class="logout-button">ログアウト</a>
+                <div id="error-message" class="error-message {% if error_message %}visible{% endif %}">
+                    <p>エラー内容：{{ error_message }}</p>
+                </div>
             </footer>
         </body>
     </html>
