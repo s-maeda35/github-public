@@ -87,47 +87,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-class CustomMaximumLengthValidator:
-    def __init__(self, max_length=128):
-        self.max_length = max_length
-
-    def validate(self, password, user=None):
-        if len(password) > self.max_length:
-            raise ValidationError(
-                _("This password must not exceed %(max_length)d characters."),
-                code='password_too_long',
-                params={'max_length': self.max_length},
-            )
-
-    def get_help_text(self):
-        return _(
-            "Your password must not exceed %(max_length)d characters."
-            % {'max_length': self.max_length}
-        )
-        
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 4,  # 最小文字数を4に設定
-        }
-    },
-    {
-        'NAME': 'CustomMaximumLengthValidator',  # 最大文字数を128に設定
-        'OPTIONS': {
-            'max_length': 128,
-        }
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
 
 
 # Internationalization
@@ -156,3 +115,5 @@ LOGIN_REDIRECT_URL = '/dmd_gui/'
 LOGOUT_REDIRECT_URL = '/dmd_gui/'
 
 SESSION_COOKIE_AGE = 86400  # 1日 = 86400秒
+
+

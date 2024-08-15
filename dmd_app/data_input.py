@@ -230,7 +230,7 @@ def demand_graph():
     plt.plot(x_values, prediction_q_values, marker='o', label='Q_需要予測')
     plt.plot(x_values, prediction_n_values, marker='o', label='N_需要予測')
     plt.xlabel('時')
-    plt.ylabel('(MW)')
+    plt.ylabel('万kW')
     plt.title('総需要')
     plt.grid(True)
     plt.legend()
